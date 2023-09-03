@@ -20,6 +20,7 @@
     }
   },
   "rules": {
+    "react-hooks/exhaustive-deps": "off",
     "sort-imports": "off",
     "import/order": [
       "error",

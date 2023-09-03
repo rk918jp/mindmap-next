@@ -4,29 +4,22 @@ import { Icon } from "@iconify/react";
 import { Menu, MenuItem, ToggleButton } from "@mui/material";
 import { ToolType } from "@/consts/mindmap";
 
-
 const TransitionIcon = styled(Icon)`
-  transition: margin-top 0.2s ;
+  transition: margin-top 0.2s;
   margin-bottom: 0;
   &:hover {
     margin-top: 4px;
     margin-bottom: -4px;
-    transition: margin-top 0.2s ;
+    transition: margin-top 0.2s;
   }
-`
+`;
 
 export const SelectComponentButton: FC<{}> = () => {
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   return (
     <>
-      <ToggleButton
-        value={ToolType.component}
-      >
-        <Icon
-          icon={"iconamoon:component-fill"}
-          style={{ fontSize: 24 }}
-        />
+      <ToggleButton value={ToolType.component}>
+        <Icon icon={"iconamoon:component-fill"} style={{ fontSize: 24 }} />
         <TransitionIcon
           onClick={(e) => {
             console.log("a");
@@ -53,18 +46,16 @@ export const SelectComponentButton: FC<{}> = () => {
             sx: {
               borderRadius: 0,
               minWidth: 200,
-            }
-          }
+            },
+          },
         }}
         MenuListProps={{
           dense: true,
           disablePadding: true,
         }}
       >
-        <MenuItem>
-          Component 1
-        </MenuItem>
+        <MenuItem>Component 1</MenuItem>
       </Menu>
     </>
-  )
-}
+  );
+};
