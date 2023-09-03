@@ -74,6 +74,7 @@ export const TextNode = memo<NodeProps>(({ data, isConnectable, selected }) => {
         ].map((position) => (
           <Handle
             key={`${position}-${type}`}
+            id={`${position}-${type}`}
             type={type}
             position={position}
             style={{ background: "#555" }}

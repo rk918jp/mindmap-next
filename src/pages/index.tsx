@@ -1,9 +1,11 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Box, Toolbar } from "@mui/material";
 import { Resizable } from "re-resizable";
 import {
+  addEdge,
   Background,
   BackgroundVariant,
+  Connection,
   Controls,
   MiniMap,
   Node,
@@ -23,7 +25,7 @@ const nodeTypes = {
 };
 export default function Home() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, _setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   useEffect(() => {
     setNodes(
@@ -46,6 +48,12 @@ export default function Home() {
       })),
     );
   }, []);
+
+  const onConnect = useCallback(
+    (connection: Connection) =>
+      setEdges((eds) => addEdge({ ...connection, animated: true }, eds)),
+    [],
+  );
 
   return (
     <Box sx={{ width: "100vw", height: "100vh", display: "flex" }}>
@@ -75,6 +83,7 @@ export default function Home() {
         onNodesChange={onNodesChange}
         edges={edges}
         onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
       >
         <Panel
           position={"top-left"}
@@ -88,7 +97,7 @@ export default function Home() {
         </Panel>
         <Controls />
         <MiniMap />
-        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+        <Background variant={BackgroundVariant.Dots} gap={10} size={1} />
       </ReactFlow>
     </Box>
   );
