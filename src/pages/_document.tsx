@@ -1,14 +1,16 @@
+import * as React from "react";
+
 import createEmotionServer from "@emotion/server/create-instance";
 import { AppType } from "next/app";
 import Document, {
-  Html,
+  DocumentContext,
+  DocumentProps,
   Head,
+  Html,
   Main,
   NextScript,
-  DocumentProps,
-  DocumentContext,
 } from "next/document";
-import * as React from "react";
+
 import createEmotionCache from "@/createEmotionCache";
 import { MyAppProps } from "@/pages/_app";
 

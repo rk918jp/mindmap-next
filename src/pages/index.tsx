@@ -1,4 +1,8 @@
-import { AppBar, Box, ButtonGroup, Toolbar } from "@mui/material";
+import {
+  Box,
+  Toolbar,
+} from "@mui/material";
+import { Resizable } from "re-resizable";
 import {
   Background,
   BackgroundVariant,
@@ -10,20 +14,34 @@ import {
   useNodesState,
 } from "reactflow";
 import "reactflow/dist/style.css";
-
-const initialNodes = [
-  { id: "1", position: { x: 100, y: 100 }, data: { label: "1" } },
-  { id: "2", position: { x: 100, y: 200 }, data: { label: "2" } },
-];
-
-const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
+import { MindmapToolbar } from "@/components/mindmap/toolbar";
+import { ToolbarVariant } from "@/consts/app";
+import { initialEdges, initialNodes } from "@/consts/mindmap";
 
 export default function Home() {
   const [nodes, _setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, _setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   return (
-    <Box sx={{ width: "100vw", height: "100vh" }}>
+    <Box sx={{ width: "100vw", height: "100vh", display: "flex" }}>
+      <Resizable
+        defaultSize={{
+          width: 300,
+          height: "calc(100vh -  5px)",
+        }}
+        enable={{
+          right: true
+        }}
+      >
+        <Box sx={{
+          width: "100%",
+          height: "100%",
+          borderRight: 1,
+          borderColor: "divider",
+        }}>
+          <Toolbar variant={ToolbarVariant}/>
+        </Box>
+      </Resizable>
       <ReactFlow
         nodes={nodes}
         onNodesChange={onNodesChange}
@@ -37,11 +55,7 @@ export default function Home() {
           }}
         >
           <Box sx={{ flexGrow: 1 }}>
-            <AppBar>
-              <Toolbar variant={"dense"}>
-                <ButtonGroup></ButtonGroup>
-              </Toolbar>
-            </AppBar>
+            <MindmapToolbar />
           </Box>
         </Panel>
         <Controls />
