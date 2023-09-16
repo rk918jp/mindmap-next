@@ -17,3 +17,11 @@ export const initialNodes: Node[] = [
 export const initialEdges: Edge[] = [
   { id: "e1-2", source: "1", target: "2", animated: true },
 ];
+
+export interface Page {
+  id: number | string;
+  name: string;
+  sortOrder: number;
+  nodes: Node[];
+  edges: Edge[];
+}

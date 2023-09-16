@@ -18,6 +18,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.7",
     "@mui/material": "^5.14.7",
+    "@reduxjs/toolkit": "^1.9.5",
     "@types/node": "20.5.9",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
@@ -27,6 +28,7 @@
     "re-resizable": "^6.9.11",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-redux": "^8.1.2",
     "reactflow": "^11.8.3",
     "typescript": "5.2.2"
   },
