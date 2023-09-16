@@ -317,12 +317,25 @@ export const TextNode = memo<NodeProps>(({ data, isConnectable, selected }) => {
           </ToggleButtonGroup>
         </Paper>
       </NodeToolbar>
-      {(["source", "target"] as HandleType[]).map((type) => {
+      {(["source"] as HandleType[]).map((type) => {
+        return [
+          Position.Bottom,
+          Position.Right,
+        ].map((position) => (
+          <Handle
+            key={`${position}-${type}`}
+            id={`${position}-${type}`}
+            type={type}
+            position={position}
+            style={{ background: "#555" }}
+            isConnectable={isConnectable}
+          />
+        ));
+      })}
+      {(["target"] as HandleType[]).map((type) => {
         return [
           Position.Top,
-          Position.Bottom,
           Position.Left,
-          Position.Right,
         ].map((position) => (
           <Handle
             key={`${position}-${type}`}
