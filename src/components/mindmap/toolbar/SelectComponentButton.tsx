@@ -14,7 +14,9 @@ const TransitionIcon = styled(Icon)`
   }
 `;
 
-export const SelectComponentButton: FC<{}> = () => {
+export const SelectComponentButton: FC<{
+  onAddNode: (type: string) => void;
+}> = ({ onAddNode }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   return (
     <>
@@ -22,7 +24,6 @@ export const SelectComponentButton: FC<{}> = () => {
         <Icon icon={"iconamoon:component-fill"} style={{ fontSize: 24 }} />
         <TransitionIcon
           onClick={(e) => {
-            console.log("a");
             e.stopPropagation();
             setAnchorEl(e.currentTarget.parentElement);
           }}
@@ -54,7 +55,14 @@ export const SelectComponentButton: FC<{}> = () => {
           disablePadding: true,
         }}
       >
-        <MenuItem>Component 1</MenuItem>
+        <MenuItem
+          onClick={() => {
+            onAddNode("text");
+            setAnchorEl(null);
+          }}
+        >
+          Text
+        </MenuItem>
       </Menu>
     </>
   );

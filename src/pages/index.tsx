@@ -52,6 +52,18 @@ export default function Home() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
+  const handleNodeChange = (id: Node["id"], data: any) => {
+    setNodes((nodes) => {
+      const index = nodes.findIndex((node) => node.id === id);
+      const newNodes = [...nodes];
+      newNodes[index].data = {
+        ...newNodes[index].data,
+        ...data,
+      };
+      return newNodes;
+    });
+  };
+
   useEffect(() => {
     if (selectedPage) {
       // 各Nodeにハンドラを登録
@@ -60,17 +72,7 @@ export default function Home() {
           ...node,
           data: {
             ...node.data,
-            onChange: (id: Node["id"], data: any) => {
-              setNodes((nodes) => {
-                const index = nodes.findIndex((node) => node.id === id);
-                const newNodes = [...nodes];
-                newNodes[index].data = {
-                  ...newNodes[index].data,
-                  ...data,
-                };
-                return newNodes;
-              });
-            },
+            onChange: handleNodeChange,
           },
         })),
       );
@@ -173,7 +175,25 @@ export default function Home() {
           }}
         >
           <Box sx={{ flexGrow: 1 }}>
-            <MindmapToolbar />
+            <MindmapToolbar
+              onAddNode={(type) => {
+                setNodes((nodes) => [
+                  ...nodes,
+                  {
+                    id: crypto.randomUUID(),
+                    type,
+                    position: {
+                      x: 250,
+                      y: 250,
+                    },
+                    data: {
+                      label: "Text",
+                      onChange: handleNodeChange,
+                    },
+                  },
+                ]);
+              }}
+            />
           </Box>
         </Panel>
         <Controls />

@@ -10,7 +10,9 @@ import { SelectComponentButton } from "@/components/mindmap/toolbar/SelectCompon
 import { ToolbarVariant } from "@/consts/app";
 import { ToolType } from "@/consts/mindmap";
 
-export const MindmapToolbar: FC = () => {
+export const MindmapToolbar: FC<{
+  onAddNode: (type: string) => void;
+}> = ({ onAddNode }) => {
   const [activeTool, setActiveTool] = useState<ToolType>(ToolType.cursor);
   return (
     <AppBar color={"inherit"}>
@@ -35,7 +37,7 @@ export const MindmapToolbar: FC = () => {
           <ToggleButton value={ToolType.edge}>
             <Icon icon={"ph:flow-arrow-fill"} style={{ fontSize: 24 }} />
           </ToggleButton>
-          <SelectComponentButton />
+          <SelectComponentButton onAddNode={onAddNode} />
         </ToggleButtonGroup>
       </Toolbar>
     </AppBar>
