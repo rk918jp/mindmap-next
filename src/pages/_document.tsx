@@ -23,6 +23,10 @@ export default function MyDocument({ emotionStyleTags }: MyDocumentProps) {
     <Html lang="ja">
       <Head>
         <meta name="emotion-insertion-point" content="" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        />
         {emotionStyleTags}
       </Head>
       <body>

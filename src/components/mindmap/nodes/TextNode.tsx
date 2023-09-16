@@ -1,6 +1,13 @@
 import { memo, useState } from "react";
-import { FormatBold, Link, LinkOff } from "@mui/icons-material";
 import {
+  Delete,
+  FormatBold,
+  InsertEmoticon,
+  Link as LinkIcon,
+  LinkOff,
+} from "@mui/icons-material";
+import {
+  Autocomplete,
   Box,
   IconButton,
   InputBase,
@@ -10,6 +17,9 @@ import {
   TextField,
   ToggleButton,
   ToggleButtonGroup,
+  Icon,
+  InputAdornment,
+  Link,
 } from "@mui/material";
 import {
   Handle,
@@ -19,12 +29,15 @@ import {
   Position,
   useNodeId,
 } from "reactflow";
+import { muiIconOptions } from "@/consts/icon";
 
 export const TextNode = memo<NodeProps>(({ data, isConnectable, selected }) => {
   const nodeId = useNodeId();
   const [editing, setEditing] = useState(false);
   const [linkAnchorEl, setLinkAnchorEl] = useState<HTMLElement | null>(null);
   const [draftLink, setDraftLink] = useState<string>("");
+  const [iconAnchorEl, setIconAnchorEl] = useState<HTMLElement | null>(null);
+  const [draftIcon, setDraftIcon] = useState<string>("");
   return (
     <Box
       sx={{
@@ -42,6 +55,15 @@ export const TextNode = memo<NodeProps>(({ data, isConnectable, selected }) => {
         fontSize: 12,
       }}
     >
+      <Box
+        sx={{
+          display: "flex",
+          position: "absolute",
+          left: 8,
+        }}
+      >
+        {data?.icon ? <Icon sx={{ mr: 2 }}>{draftIcon}</Icon> : null}
+      </Box>
       {editing ? (
         <Box>
           <InputBase
@@ -75,7 +97,13 @@ export const TextNode = memo<NodeProps>(({ data, isConnectable, selected }) => {
             fontWeight: data?.formats?.includes("bold") ? "bold" : "normal",
           }}
         >
-          {data?.label}
+          {data?.formats?.includes("link") ? (
+            <Link href={data?.href} target={"_blank"}>
+              {data?.label}
+            </Link>
+          ) : (
+            <>{data?.label}</>
+          )}
         </Box>
       )}
       <NodeToolbar isVisible={selected} offset={8}>
@@ -86,6 +114,7 @@ export const TextNode = memo<NodeProps>(({ data, isConnectable, selected }) => {
             value={data?.formats ?? []}
             onChange={(e, value) => data?.onChange(nodeId, { formats: value })}
           >
+            {/* ===== リンク設定 ===== */}
             <ToggleButton
               disableRipple
               value={"link"}
@@ -96,7 +125,7 @@ export const TextNode = memo<NodeProps>(({ data, isConnectable, selected }) => {
                 e.stopPropagation();
               }}
             >
-              <Link />
+              <LinkIcon />
             </ToggleButton>
             <Popover
               open={Boolean(linkAnchorEl)}
@@ -165,6 +194,120 @@ export const TextNode = memo<NodeProps>(({ data, isConnectable, selected }) => {
                   }}
                 >
                   <LinkOff fontSize={"small"} />
+                </IconButton>
+              </Stack>
+            </Popover>
+            {/* ===== アイコン設定 ===== */}
+            <ToggleButton
+              disableRipple
+              value={"icon"}
+              onClick={(e) => {
+                setIconAnchorEl(e.currentTarget);
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <InsertEmoticon />
+            </ToggleButton>
+            <Popover
+              open={Boolean(iconAnchorEl)}
+              anchorEl={iconAnchorEl}
+              onClose={() => {
+                const hasFormatRegistered = (data.formats ?? []).includes(
+                  "icon",
+                );
+                data?.onChange(nodeId, {
+                  icon: draftIcon,
+                  formats: hasFormatRegistered
+                    ? data.formats
+                    : [...(data.formats ?? []), "icon"],
+                });
+                setIconAnchorEl(null);
+              }}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+            >
+              <Stack
+                direction={"row"}
+                spacing={1}
+                sx={{
+                  p: 1,
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+                    const hasFormatRegistered = (data.formats ?? []).includes(
+                      "icon",
+                    );
+                    data?.onChange(nodeId, {
+                      icon: draftIcon,
+                      formats: hasFormatRegistered
+                        ? data.formats
+                        : [...(data.formats ?? []), "icon"],
+                    });
+                    setIconAnchorEl(null);
+                    e.stopPropagation();
+                    e.preventDefault();
+                  }
+                }}
+              >
+                <Autocomplete
+                  sx={{ minWidth: 300 }}
+                  onInputChange={(_, value) => {
+                    setDraftIcon(value);
+                  }}
+                  defaultValue={data?.icon}
+                  isOptionEqualToValue={(option, value) =>
+                    option.code === value.code
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size={"small"}
+                      variant={"outlined"}
+                      value={draftLink}
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <>
+                            <InputAdornment position="start">
+                              <Icon>{draftIcon}</Icon>
+                            </InputAdornment>
+                            {params.InputProps.startAdornment}
+                          </>
+                        ),
+                      }}
+                    />
+                  )}
+                  renderOption={(props, option) => (
+                    <Box
+                      component="li"
+                      sx={{ "& > span": { mr: 2, flexShrink: 0 } }}
+                      {...props}
+                      key={option.code}
+                    >
+                      <Icon>{option.code}</Icon>
+                      {option.label}
+                    </Box>
+                  )}
+                  options={muiIconOptions}
+                />
+                <IconButton
+                  size={"small"}
+                  color={"error"}
+                  onClick={() => {
+                    setDraftIcon("");
+                    setIconAnchorEl(null);
+                    data?.onChange(nodeId, {
+                      icon: null,
+                      formats: (data.formats ?? []).filter(
+                        (v: string) => v !== "icon",
+                      ),
+                    });
+                  }}
+                >
+                  <Delete fontSize={"small"} />
                 </IconButton>
               </Stack>
             </Popover>
