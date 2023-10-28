@@ -318,10 +318,7 @@ export const TextNode = memo<NodeProps>(({ data, isConnectable, selected }) => {
         </Paper>
       </NodeToolbar>
       {(["source"] as HandleType[]).map((type) => {
-        return [
-          Position.Bottom,
-          Position.Right,
-        ].map((position) => (
+        return [Position.Bottom, Position.Right].map((position) => (
           <Handle
             key={`${position}-${type}`}
             id={`${position}-${type}`}
@@ -333,10 +330,7 @@ export const TextNode = memo<NodeProps>(({ data, isConnectable, selected }) => {
         ));
       })}
       {(["target"] as HandleType[]).map((type) => {
-        return [
-          Position.Top,
-          Position.Left,
-        ].map((position) => (
+        return [Position.Top, Position.Left].map((position) => (
           <Handle
             key={`${position}-${type}`}
             id={`${position}-${type}`}
