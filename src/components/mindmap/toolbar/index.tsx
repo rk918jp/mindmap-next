@@ -2,10 +2,14 @@ import { FC, useState } from "react";
 import { Icon } from "@iconify/react";
 import {
   AppBar,
+  Button,
   ToggleButton,
   ToggleButtonGroup,
   Toolbar,
 } from "@mui/material";
+import { toPng } from "html-to-image";
+import * as jspdf from "jspdf";
+import { getRectOfNodes, getTransformForBounds, useReactFlow } from "reactflow";
 import { SelectComponentButton } from "@/components/mindmap/toolbar/SelectComponentButton";
 import { ToolbarVariant } from "@/consts/app";
 import { ToolType } from "@/consts/mindmap";
@@ -14,9 +18,13 @@ export const MindmapToolbar: FC<{
   onAddNode: (type: string) => void;
 }> = ({ onAddNode }) => {
   const [activeTool, setActiveTool] = useState<ToolType>(ToolType.cursor);
+  const reactFlowInstance = useReactFlow();
   return (
     <AppBar color={"inherit"}>
-      <Toolbar variant={ToolbarVariant}>
+      <Toolbar
+        variant={ToolbarVariant}
+        sx={{ justifyContent: "space-between" }}
+      >
         <ToggleButtonGroup
           value={activeTool}
           exclusive
@@ -39,6 +47,44 @@ export const MindmapToolbar: FC<{
           </ToggleButton>
           <SelectComponentButton onAddNode={onAddNode} />
         </ToggleButtonGroup>
+        <Button
+          onClick={async () => {
+            reactFlowInstance.fitView();
+            const imageWidth = 1920;
+            const imageHeight = 1080;
+            const nodesBounds = getRectOfNodes(reactFlowInstance.getNodes());
+            const [transformX, transformY, scale] = getTransformForBounds(
+              nodesBounds,
+              imageWidth,
+              imageHeight,
+              0.5,
+              2,
+            );
+
+            const image = await toPng(
+              document.querySelector(".react-flow__viewport") as HTMLElement,
+              {
+                backgroundColor: "#fff",
+                width: imageWidth,
+                height: imageHeight,
+                style: {
+                  width: String(imageWidth),
+                  height: String(imageHeight),
+                  transform: `translate(${transformX}px, ${transformY}px) scale(${scale})`,
+                },
+              },
+            );
+            const pdf = new jspdf.jsPDF({
+              orientation: "landscape",
+              unit: "px",
+              format: [imageWidth, imageHeight],
+            });
+            pdf.addImage(image, "PNG", 0, 0, imageWidth, imageHeight);
+            pdf.save("flow.pdf");
+          }}
+        >
+          Export
+        </Button>
       </Toolbar>
     </AppBar>
   );
