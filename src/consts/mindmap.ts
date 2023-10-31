@@ -4,6 +4,7 @@ export const ToolType = {
   cursor: "cursor",
   edge: "edge",
   component: "component",
+  sketch: "sketch",
 } as const;
 
 export type ToolType = (typeof ToolType)[keyof typeof ToolType];

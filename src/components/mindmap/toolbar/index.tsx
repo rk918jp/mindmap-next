@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Icon } from "@iconify/react";
 import {
   AppBar,
@@ -13,12 +13,15 @@ import { getRectOfNodes, getTransformForBounds, useReactFlow } from "reactflow";
 import { SelectComponentButton } from "@/components/mindmap/toolbar/SelectComponentButton";
 import { ToolbarVariant } from "@/consts/app";
 import { ToolType } from "@/consts/mindmap";
+import { useAppDispatch, useAppSelector } from "@/hooks/store";
+import { changeActiveTool } from "@/store/mindmap";
 
 export const MindmapToolbar: FC<{
   onAddNode: (type: string) => void;
 }> = ({ onAddNode }) => {
-  const [activeTool, setActiveTool] = useState<ToolType>(ToolType.cursor);
+  const dispatch = useAppDispatch();
   const reactFlowInstance = useReactFlow();
+  const activeTool = useAppSelector((state) => state.mindmap.activeTool);
   return (
     <AppBar color={"inherit"}>
       <Toolbar
@@ -28,7 +31,7 @@ export const MindmapToolbar: FC<{
         <ToggleButtonGroup
           value={activeTool}
           exclusive
-          onChange={(_, value) => setActiveTool(value)}
+          onChange={(_, value) => dispatch(changeActiveTool(value))}
           sx={{
             height: 48,
             borderRadius: 0,
@@ -46,6 +49,9 @@ export const MindmapToolbar: FC<{
             <Icon icon={"ph:flow-arrow-fill"} style={{ fontSize: 24 }} />
           </ToggleButton>
           <SelectComponentButton onAddNode={onAddNode} />
+          <ToggleButton value={ToolType.sketch}>
+            <Icon icon={"mdi:draw"} style={{ fontSize: 24 }} />
+          </ToggleButton>
         </ToggleButtonGroup>
         <Button
           onClick={async () => {
