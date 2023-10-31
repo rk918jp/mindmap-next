@@ -12,6 +12,7 @@ import {
   Paper,
   Toolbar,
 } from "@mui/material";
+import { SVG } from "@svgdotjs/svg.js";
 import { Resizable } from "re-resizable";
 import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
 import {
@@ -258,8 +259,12 @@ export default function Home() {
                   </Button>
                   <Button
                     onClick={async () => {
-                      const svg = await canvasRef.current?.exportSvg();
-                      console.log(svg);
+                      const svgStr = await canvasRef.current?.exportSvg();
+                      if (svgStr) {
+                        const draw = SVG(svgStr);
+                        // TODO: svgのトリミング(各子要素のbboxの最小最大を抜き出して、SVG全体のviewboxを設定)
+                        // TODO: SVGNodeの追加
+                      }
                     }}
                   >
                     <Check />
