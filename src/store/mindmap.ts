@@ -6,13 +6,14 @@ import {
   PayloadAction,
   Update,
 } from "@reduxjs/toolkit";
-import { Page } from "@/consts/mindmap";
+import { Page, ToolType } from "@/consts/mindmap";
 import { AppState } from "@/store/index";
 
 interface MindmapState {
   initialized: boolean;
   pages: EntityState<Page>;
   selectedPageId?: EntityId;
+  activeTool: ToolType;
 }
 
 const pagesAdapter = createEntityAdapter<Page>({
@@ -22,6 +23,7 @@ const pagesAdapter = createEntityAdapter<Page>({
 const initialState: MindmapState = {
   initialized: false,
   pages: pagesAdapter.getInitialState(),
+  activeTool: ToolType.cursor,
 };
 
 export const mindmapSlice = createSlice({
@@ -60,6 +62,9 @@ export const mindmapSlice = createSlice({
     updatePage: (state, action: PayloadAction<Update<Page>>) => {
       pagesAdapter.updateOne(state.pages, action);
     },
+    changeActiveTool: (state, action: PayloadAction<ToolType>) => {
+      state.activeTool = action.payload;
+    },
   },
 });
 
@@ -67,4 +72,5 @@ export const pagesSelector = pagesAdapter.getSelectors(
   (state: AppState) => state.mindmap.pages,
 );
 
-export const { init, selectPage, addPage, updatePage } = mindmapSlice.actions;
+export const { init, selectPage, addPage, updatePage, changeActiveTool } =
+  mindmapSlice.actions;

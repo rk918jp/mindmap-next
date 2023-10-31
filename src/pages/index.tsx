@@ -1,14 +1,19 @@
-import { useCallback, useEffect } from "react";
-import { Add } from "@mui/icons-material";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Icon } from "@iconify/react";
+import { Add, Check, Delete, Redo, Undo } from "@mui/icons-material";
 import {
   Box,
+  Button,
+  ButtonGroup,
   IconButton,
   List,
   ListItemButton,
   ListSubheader,
+  Paper,
   Toolbar,
 } from "@mui/material";
 import { Resizable } from "re-resizable";
+import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
 import {
   addEdge,
   Background,
@@ -27,7 +32,7 @@ import "reactflow/dist/style.css";
 import { TextNode } from "@/components/mindmap/nodes/TextNode";
 import { MindmapToolbar } from "@/components/mindmap/toolbar";
 import { ToolbarVariant } from "@/consts/app";
-import { initialEdges, initialNodes } from "@/consts/mindmap";
+import { initialEdges, initialNodes, ToolType } from "@/consts/mindmap";
 import { useAppDispatch, useAppSelector } from "@/hooks/store";
 import {
   addPage,
@@ -41,7 +46,12 @@ const nodeTypes = {
 };
 export default function Home() {
   const dispatch = useAppDispatch();
+  // canvas
+  const canvasRef = useRef<ReactSketchCanvasRef>(null);
+  const [eraseMode, setEraseMode] = useState<boolean>(false);
+
   const pages = useAppSelector((state) => pagesSelector.selectAll(state));
+  const activeTool = useAppSelector((state) => state.mindmap.activeTool);
   const selectedPageId = useAppSelector(
     (state) => state.mindmap.selectedPageId,
   );
@@ -201,6 +211,63 @@ export default function Home() {
           <Controls />
           <MiniMap />
           <Background variant={BackgroundVariant.Dots} gap={10} size={1} />
+          {activeTool === ToolType.sketch && (
+            <ReactSketchCanvas
+              ref={canvasRef}
+              style={{
+                position: "absolute",
+                zIndex: 4,
+              }}
+              canvasColor={"transparent"}
+              width={"100%"}
+              height={"100%"}
+            />
+          )}
+          {activeTool === ToolType.sketch && (
+            <Panel position={"bottom-center"}>
+              <Paper>
+                <ButtonGroup color={"inherit"}>
+                  <Button
+                    onClick={() => {
+                      canvasRef.current?.undo();
+                    }}
+                  >
+                    <Undo />
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      canvasRef.current?.redo();
+                    }}
+                  >
+                    <Redo />
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      canvasRef.current?.clearCanvas();
+                    }}
+                  >
+                    <Delete />
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      canvasRef.current?.eraseMode(!eraseMode);
+                      setEraseMode(!eraseMode);
+                    }}
+                  >
+                    <Icon icon={"mdi:eraser"} fontSize={24} />
+                  </Button>
+                  <Button
+                    onClick={async () => {
+                      const svg = await canvasRef.current?.exportSvg();
+                      console.log(svg);
+                    }}
+                  >
+                    <Check />
+                  </Button>
+                </ButtonGroup>
+              </Paper>
+            </Panel>
+          )}
         </ReactFlow>
       </Box>
     </ReactFlowProvider>
